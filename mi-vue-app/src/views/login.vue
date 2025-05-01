@@ -1,54 +1,45 @@
 <template>
     <div class="login">
-      <h2>Iniciar sesión</h2>
-      <input v-model="username" placeholder="Usuario" />
-      <input v-model="password" type="password" placeholder="Contraseña" />
-      <button @click="login">Ingresar</button>
-      <p v-if="error">{{ error }}</p>
+      <h2>Iniciar Sesión</h2>
+      <form @submit.prevent="login">
+        <div>
+          <label for="username">Usuario:</label>
+          <input v-model="username" type="text" id="username" />
+        </div>
+  
+        <div>
+          <label for="password">Contraseña:</label>
+          <input v-model="password" type="password" id="password" />
+        </div>
+  
+        <button type="submit">Ingresar</button>
+  
+        <p v-if="error" style="color: red">{{ error }}</p>
+      </form>
     </div>
   </template>
   
   <script>
+  import authService from '../services/SingletonAuthService';
+  
   export default {
     data() {
       return {
         username: '',
         password: '',
         error: ''
-      }
+      };
     },
     methods: {
       login() {
-        // Usuarios hardcodeados
-        const usuarios = {
-          "Jose": { password: "1234", examenes: ["Ing.Software II", "Paradigma I"] },
-          "Gilda": { password: "abcd", examenes: ["Ing.Software II", "Ing.Software I"] }
-        }
-  
-        const user = usuarios[this.username]
-  
-        if (user && user.password === this.password) {
-          // Guardamos usuario en localStorage
-          localStorage.setItem("usuario", this.username)
-          this.$router.push('/dashboard')
+        const exito = authService.login(this.username, this.password);
+        if (exito) {
+          this.$router.push('/dashboard');
         } else {
-          this.error = "Usuario o contraseña incorrectos"
+          this.error = "Usuario o contraseña incorrectos";
         }
       }
     }
-  }
+  };
   </script>
-  
-  <style scoped>
-  .login {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    margin: auto;
-    margin-top: 100px;
-  }
-  input, button {
-    margin: 5px 0;
-  }
-  </style>
   
