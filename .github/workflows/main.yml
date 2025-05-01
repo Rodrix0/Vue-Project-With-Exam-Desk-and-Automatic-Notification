@@ -1,37 +1,26 @@
-name: CI
+name: Run Tests
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Run tests with coverage
-        run: npm run test:coverage
+      - name: Run tests
+        run: npm run test -- --coverage
 
-      - name: Upload coverage report
-        if: always()
-        uses: actions/upload-artifact@3a1801c7fd6b1797e684bbd38025e68121de879e
-        with:
-          name: coverage-report
-          path: coverage/
