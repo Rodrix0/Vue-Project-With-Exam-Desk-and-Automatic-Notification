@@ -23,6 +23,7 @@ jobs:
         working-directory: mi-vue-app
 
       - name: Run tests
-        run: npm run test -- --coverage
+        run: npx vitest --coverage
         working-directory: mi-vue-app
+
 
