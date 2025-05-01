@@ -31,7 +31,7 @@ jobs:
 
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@3a1801c7fd6b1797e684bbd38025e68121de879e
         with:
           name: coverage-report
           path: coverage/
