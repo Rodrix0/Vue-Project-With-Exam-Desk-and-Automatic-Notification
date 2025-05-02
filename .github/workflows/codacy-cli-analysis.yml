@@ -28,9 +28,10 @@ jobs:
       - name: Download Codacy CLI
         run: |
           curl -L -o codacy-analysis-cli-12.0.5.jar https://github.com/codacy/codacy-analysis-cli/releases/download/12.0.5/codacy-analysis-cli-12.0.5.jar
-      - name: Verificar archivos descargados
-        run: ls -l
-  
+
+      - name: Verificar tipo de archivo descargado
+        run: |
+          file codacy-analysis-cli-12.0.5.jar
 
       - name: Run Codacy CLI Analysis
         run: |
@@ -51,3 +52,4 @@ jobs:
         run: |
           node .github/scripts/codacy-to-annotations.js
         continue-on-error: true
+
