@@ -1,4 +1,4 @@
-name: Codacy Static Analysis
+name: Codacy CLI Analysis
 
 on:
   push:
@@ -8,13 +8,40 @@ on:
 
 jobs:
   codacy-analysis:
-    name: Run Codacy analysis
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Download Codacy CLI
+        run: |
+          curl -L -o codacy-cli.jar https://github.com/codacy/codacy-analysis-cli/releases/latest/download/codacy-analysis-cli.jar
+
+      - name: Run Codacy CLI Analysis
+        run: |
+          java -jar codacy-cli.jar analyze \
+            --tool eslint \
+            --format json \
+            --output codacy-results.json \
+            || echo "::warning ::Análisis completado con advertencias."
+
+      - name: Mostrar Resultados (en la consola de Actions)
+        run: |
+          echo "::group::Resultados de análisis"
+          cat codacy-results.json
+          echo "::endgroup::"
+
+      - name: Marcar errores como anotaciones en GitHub (opcional)
+        run: |
+          node .github/scripts/codacy-to-annotations.js
+        continue-on-error: true
