@@ -1,4 +1,4 @@
-name: Codacy CLI Analysis
+name: Codacy Analysis
 
 on:
   push:
@@ -25,31 +25,7 @@ jobs:
         run: |
           npm install
 
-      - name: Download Codacy CLI
-        run: |
-          curl -L -o codacy-analysis-cli-12.0.5.jar https://github.com/codacy/codacy-analysis-cli/releases/download/12.0.5/codacy-analysis-cli-12.0.5.jar
-
-      - name: Verificar tipo de archivo descargado
-        run: |
-          file codacy-analysis-cli-12.0.5.jar
-
-      - name: Run Codacy CLI Analysis
-        run: |
-          java -jar codacy-analysis-cli-12.0.5.jar analyze \
-            --tool eslint \
-            --directory mi-vue-app \
-            --format json \
-            --output codacy-results.json \
-            || echo "::warning ::Análisis completado con advertencias."
-
-      - name: Mostrar Resultados
-        run: |
-          echo "::group::Resultados de análisis"
-          cat codacy-results.json
-          echo "::endgroup::"
-
-      - name: Marcar errores como anotaciones (opcional)
-        run: |
-          node .github/scripts/codacy-to-annotations.js
-        continue-on-error: true
-
+      - name: Run Codacy Analysis
+        uses: codacy/codacy-analysis-cli-action@v2
+        with:
+          token: ${{ secrets.CODACY_PROJECT_TOKEN }}
