@@ -1,4 +1,4 @@
-name: Codacy Analysis
+name: Codacy Analysis via API
 
 on:
   push:
@@ -25,8 +25,29 @@ jobs:
         run: |
           npm install
 
-      - name: Run Codacy Analysis
-        uses: codacy/codacy-analysis-cli-action@v3  # Última versión disponible
-        with:
-          token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+      - name: Run Codacy Analysis via API
+        run: |
+          # Enviar solicitud para iniciar el análisis a la API de Codacy
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.CODACY_PROJECT_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "tool": "eslint",
+                  "commit_sha": "${{ github.sha }}",
+                  "branch": "main",
+                  "files": "mi-vue-app/**/*"
+                }' \
+            "https://api.codacy.com/2.0/project/${{ secrets.CODACY_PROJECT_ID }}/analyze"
+
+      - name: Mostrar resultados
+        run: |
+          # Mostrar el archivo de resultados (suponiendo que Codacy devuelve un JSON de resultados)
+          curl -X GET \
+            -H "Authorization: token ${{ secrets.CODACY_PROJECT_TOKEN }}" \
+            "https://api.codacy.com/2.0/project/${{ secrets.CODACY_PROJECT_ID }}/analysis/results?commit_sha=${{ github.sha }}" \
+            -o codacy-results.json
+
+          echo "::group::Resultados de análisis"
+          cat codacy-results.json
+          echo "::endgroup::"
 
