@@ -13,7 +13,7 @@ export default [
       vue,
     },
     rules: {
-      'vue/no-unused-vars': 'warn',
+      'vue/no-unused-vars': 'warn', // Aquí agregas reglas personalizadas
     },
   },
 ];
