@@ -20,8 +20,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Verificar estructura de archivos (debug)
+        run: ls -R
+
       - name: Install Node dependencies
-        run: npm install
+        run: |
+          cd mi-vue-app
+          npm install
 
       - name: Download Codacy CLI
         run: |
@@ -29,10 +34,11 @@ jobs:
 
       - name: Run Codacy CLI Analysis
         run: |
-          java -jar codacy-cli.jar analyze \
+          cd mi-vue-app
+          java -jar ../codacy-cli.jar analyze \
             --tool eslint \
             --format json \
-            --output codacy-results.json \
+            --output ../codacy-results.json \
             || echo "::warning ::Análisis completado con advertencias."
 
       - name: Mostrar Resultados (en la consola de Actions)
